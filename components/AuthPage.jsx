@@ -1,18 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { auth } from "@/libs/firebase";
+import { auth, db } from "@/libs/firebase";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  updateProfile,
 } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import useAuth from "@/libs/hooks/useAuth";
+import { faL } from "@fortawesome/free-solid-svg-icons";
+import { doc, setDoc } from "firebase/firestore";
 
 const AuthPage = () => {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("")
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
 
@@ -25,7 +29,7 @@ const AuthPage = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         setLoading(false);
-        console.log(userCredential);
+        // console.log(userCredential);
         router.push("/chat");
       })
       .catch((error) => {
@@ -33,6 +37,31 @@ const AuthPage = () => {
         setLoading(false);
       });
   };
+
+  const handleSignUp = () => {
+    setLoading(true);
+
+    createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      setDoc(doc(db, "users", userCredential.user.uid), {
+        username,
+        email,
+        id: userCredential.user.uid,
+        blocked:[]
+      });
+
+      setDoc(doc(db, "userchats", userCredential.user.uid), {
+        chats:[]
+      });
+
+
+      setLoading(false);
+    })
+    .catch((error) => {
+      console.log(error);
+      setLoading(false);
+    })
+  }
 
   return (
     <div className="font-[sans-serif]">
@@ -65,6 +94,18 @@ const AuthPage = () => {
             </h3>
 
             <div className="space-y-4">
+              <div>
+                  <input
+                    name="username"
+                    type="username"
+                    autoComplete="username"
+                    required
+                    className="bg-gray-100 w-full text-sm text-gray-800 px-4 py-3.5 rounded-md outline-blue-600 focus:bg-transparent"
+                    placeholder="Username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                  />
+                </div>
               <div>
                 <input
                   name="email"
@@ -122,6 +163,15 @@ const AuthPage = () => {
                 onClick={handleSignIn}
               >
                 Log in
+              </button>
+            </div>
+            <div className="!mt-8">
+              <button
+                type="button"
+                className="w-full shadow-xl py-2.5 px-4 text-sm font-semibold rounded text-white bg-green-600 hover:bg-green-700 focus:outline-none"
+                onClick={handleSignUp}
+              >
+                Sign Up
               </button>
             </div>
 

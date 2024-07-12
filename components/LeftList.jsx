@@ -1,33 +1,30 @@
-"use client";
+import React from 'react';
 
-import { useState, useEffect } from "react";
-
-const LeftList = ({ user, signOut }) => {
-
+const LeftList = () => {
   return (
-    <>
-        <div>
-            <div className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
-                <span className="font-medium text-gray-600 dark:text-gray-300">JL</span>
-            </div>
+    <div className="flex flex-col w-full h-full bg-gray-800 text-white">
+      <div className="p-4 flex items-center border-b border-gray-700">
+        <div className="bg-gray-600 rounded-full h-12 w-12 flex items-center justify-center">
+          <span className="text-xl">A</span>
         </div>
-        
-
-        {user ? (
-            <button
-            type="button"
-            onClick={() => {
-                signOut;
-                alert("Signed out");
-            }}
-            className="outline_btn"
-            >
-            Sign Out
-            </button>
-        ) : (
-            <button>no</button>
-        )}
-    </>
+        <div className="ml-4">
+          <h2 className="text-lg font-semibold">John Doe</h2>
+        </div>
+      </div>
+      <div className="flex-1 overflow-y-auto">
+        {['Jane Doe', 'Jane Doe', 'Jane Doe', 'Jane Doe'].map((name, index) => (
+          <div key={index} className="flex items-center p-4 border-b border-gray-700">
+            <div className="bg-gray-600 rounded-full h-10 w-10 flex items-center justify-center">
+              <span className="text-sm">A</span>
+            </div>
+            <div className="ml-4">
+              <h3 className="text-sm font-medium">{name}</h3>
+              <p className="text-xs">Hello</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };
 
